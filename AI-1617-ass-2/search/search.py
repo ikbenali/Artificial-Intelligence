@@ -19,6 +19,7 @@ Pacman agents (in searchAgents.py).
 """
 
 import util
+from util import *
 
 class SearchProblem:
     """
@@ -71,7 +72,8 @@ def tinyMazeSearch(problem):
     from game import Directions
     s = Directions.SOUTH
     w = Directions.WEST
-    return  [s, s, w, s, w, w, s, w]
+    return [s, s, w, s, w, w, s, w]
+
 
 def depthFirstSearch(problem):
     """
@@ -88,38 +90,86 @@ def depthFirstSearch(problem):
     print "Start's successors:", problem.getSuccessors(problem.getStartState())
     """
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+
+    node = Node(problem.getStartState(), None, 0, None)
+
+    if problem.isGoalState(node.state):
+        return node.sol
+
+    frontier = Queue()
+    frontier.push(node)
+    explored = []
+
+    while 1:
+        if frontier.isEmpty():
+            util.raiseNotDefined()
+
+        node = frontier.pop()
+        explored.append(node.state)
+
+        children = Queue()
+
+        for c in problem.getSuccessors(node.state):
+            child = Node(c[0], c[1], c[2], node)
+            if child.state not in frontier.list and child.state not in explored:
+                if problem.isGoalState(child.state):
+                    return Node.sol(child)
+                children.push(child)
+            frontier.push(children)
 
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
     "*** YOUR CODE HERE ***"
 
-    tree = Node(problem.getStartState(),None,None,None)
+    node = Node(problem.getStartState(), None, 0, None)
 
-    if problem.isGoalState(tree):
-        return tree.sol
-
-    frontier = [tree]
+    print node.state
+    if problem.isGoalState(node):
+        return node.sol
+    frontier = Queue()
+    frontier.push(node)
+    print [node.state for node in frontier]
     explored = []
 
     while 1:
-        if not frontier:
-            return ['Stop']
+        if frontier.isEmpty:
+            util.raiseNotDefined()
 
-        tree = frontier.pop(0)
-        explored.append(tree.state)
+        node = frontier.pop()
+        explored.append(node.state)
 
-        for c in problem.getSuccessors(tree.state) :
-            child = Node(c[0], c[1], c[2], tree)
-            if child not in frontier and child.state not in explored:
+        for c in problem.getSuccessors(node.state):
+            child = Node(c[0], c[1], c[2], node)
+            if child not in frontier.list and child.state not in explored:
                 if problem.isGoalState(child.state):
                     return Node.sol(child)
-                frontier.append(child)
+                frontier.push(child)
+
 
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+
+    node = Node(problem.getStartState(), None, 0, None)
+
+    if problem.isGoalState(node):
+        return node.sol
+    frontier = PriorityQueue()
+    frontier = frontier.push(node)
+    explored = []
+    while 1:
+        if not frontier:
+            util.raiseNotDefined()
+
+        node = frontier.pop(0)
+        explored.append(node.state)
+
+        for c in problem.getSuccessors(node.state):
+            child = Node(c[0], c[1], c[2], node)
+            if child not in frontier and child.state not in explored:
+                if problem.isGoalState(child.state):
+                    return Node.sol(child)
+                frontier.append(child)
 
 def nullHeuristic(state, problem=None):
     """
@@ -128,17 +178,20 @@ def nullHeuristic(state, problem=None):
     """
     return 0
 
+
 def aStarSearch(problem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
     "*** YOUR CODE HERE ***"
     util.raiseNotDefined()
 
+
 class Node:
-    def __init__(self,state,parent,action,cost):
-        self.state = state
-        self.action = action
-        self.cost = cost
-        self.parent = parent
+
+    def __init__(self, s, a, c, p):
+        self.state = s
+        self.action = a
+        self.cost = c
+        self.parent = p
 
     def sol(self):
         if self.parent is None:
