@@ -19,7 +19,7 @@ Pacman agents (in searchAgents.py).
 """
 
 import util
-from util import *
+
 
 class SearchProblem:
     """
@@ -93,29 +93,27 @@ def depthFirstSearch(problem):
 
     node = Node(problem.getStartState(), None, 0, None)
 
-    if problem.isGoalState(node.state):
+    if problem.isGoalState(node):
         return node.sol
 
-    frontier = Queue()
-    frontier.push(node)
+    frontier = [node]
     explored = []
 
-    while 1:
-        if frontier.isEmpty():
+    while True:
+        if not frontier:
             util.raiseNotDefined()
-
-        node = frontier.pop()
+        node = frontier.pop(0)
         explored.append(node.state)
-
-        children = Queue()
+        children = []
 
         for c in problem.getSuccessors(node.state):
             child = Node(c[0], c[1], c[2], node)
-            if child.state not in frontier.list and child.state not in explored:
+            if child not in frontier and child.state not in explored:
                 if problem.isGoalState(child.state):
                     return Node.sol(child)
-                children.push(child)
-            frontier.push(children)
+                children.append(child)
+        frontier = children + frontier
+
 
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
@@ -123,21 +121,17 @@ def breadthFirstSearch(problem):
 
     node = Node(problem.getStartState(), None, 0, None)
 
-    print node.state
-    if problem.isGoalState(node):
-        return node.sol
-    frontier = Queue()
+    # if problem.isGoalState(node): # set to comment, otherwise it will not work with eightpuzzle.py
+    #    return node.sol
+    frontier = util.Queue()
     frontier.push(node)
-    print [node.state for node in frontier]
     explored = []
 
-    while 1:
-        if frontier.isEmpty:
+    while True:
+        if frontier.isEmpty == 1:
             util.raiseNotDefined()
-
         node = frontier.pop()
         explored.append(node.state)
-
         for c in problem.getSuccessors(node.state):
             child = Node(c[0], c[1], c[2], node)
             if child not in frontier.list and child.state not in explored:
@@ -152,24 +146,27 @@ def uniformCostSearch(problem):
 
     node = Node(problem.getStartState(), None, 0, None)
 
+    # set to comment, otherwise it will not work with eightpuzzle.py
     if problem.isGoalState(node):
         return node.sol
-    frontier = PriorityQueue()
-    frontier = frontier.push(node)
+    frontier = util.PriorityQueue()
+    frontier.push(node, node.cost)
     explored = []
-    while 1:
-        if not frontier:
+
+    while True:
+        if frontier.isEmpty == 1:
             util.raiseNotDefined()
-
-        node = frontier.pop(0)
+        node = frontier.pop()
+        if problem.isGoalState(node.state):
+            return Node.sol(node)
         explored.append(node.state)
-
         for c in problem.getSuccessors(node.state):
             child = Node(c[0], c[1], c[2], node)
-            if child not in frontier and child.state not in explored:
-                if problem.isGoalState(child.state):
-                    return Node.sol(child)
-                frontier.append(child)
+            if child not in frontier.heap and child.state not in explored:
+                frontier.push(child, child.cost)
+            elif child.state in frontier.heap is child.state > frontier.heap:
+                frontier.push(child, child.cost)
+
 
 def nullHeuristic(state, problem=None):
     """
@@ -182,7 +179,30 @@ def nullHeuristic(state, problem=None):
 def aStarSearch(problem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+
+    node = Node(problem.getStartState(), None, 0, None)
+
+    # set to comment, otherwise it will not work with eightpuzzle.py
+    if problem.isGoalState(node):
+        return node.sol
+    frontier = util.PriorityQueue()
+    frontier.push(node, node.cost)
+    explored = []
+
+    while True:
+        if frontier.isEmpty == 1:
+            util.raiseNotDefined()
+        node = frontier.pop()
+        if problem.isGoalState(node.state):
+            return Node.sol(node)
+        explored.append(node.state)
+        for c in problem.getSuccessors(node.state):
+            child = Node(c[0], c[1], c[2], node)
+            if child not in frontier.heap and child.state not in explored:
+                frontier.push(child, child.cost)
+            elif child.state in frontier.heap is child.state > frontier.heap:
+                frontier.push(child, child.cost)
+
 
 
 class Node:
@@ -193,12 +213,14 @@ class Node:
         self.cost = c
         self.parent = p
 
+    def __repr__(self):
+        return "Node(%s, %s, %s, %s)" % (self.state, self.action, self.cost, self.parent if self.parent is not None else None)
+
     def sol(self):
         if self.parent is None:
             return []
         else:
             return self.parent.sol() + [self.action]
-
 
 # Abbreviations
 bfs = breadthFirstSearch
