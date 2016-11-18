@@ -108,6 +108,8 @@ def depthFirstSearch(problem):
 
         for c in problem.getSuccessors(node.state):
             child = Node(c[0], c[1], c[2], node)
+            # print "Node(%s, %s, %s, %s)" % (child.state, child.action,
+            # child.cost, node.state)
             if child not in frontier and child.state not in explored:
                 if problem.isGoalState(child.state):
                     return Node.sol(child)
@@ -134,6 +136,8 @@ def breadthFirstSearch(problem):
         explored.append(node.state)
         for c in problem.getSuccessors(node.state):
             child = Node(c[0], c[1], c[2], node)
+            # print "Node(%s, %s, %s, %s)" % (child.state, child.action,
+            # child.cost, node.state)
             if child not in frontier.list and child.state not in explored:
                 if problem.isGoalState(child.state):
                     return Node.sol(child)
@@ -204,7 +208,6 @@ def aStarSearch(problem, heuristic=nullHeuristic):
                 frontier.push(child, child.cost)
 
 
-
 class Node:
 
     def __init__(self, s, a, c, p):
@@ -213,8 +216,9 @@ class Node:
         self.cost = c
         self.parent = p
 
-    def __repr__(self):
-        return "Node(%s, %s, %s, %s)" % (self.state, self.action, self.cost, self.parent if self.parent is not None else None)
+    # def __repr__(self):
+    # return "Node(%s, %s, %s, %s)" % (self.state, self.action, self.cost,
+    # self.parent)
 
     def sol(self):
         if self.parent is None:
