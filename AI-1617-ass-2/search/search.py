@@ -160,6 +160,7 @@ def uniformCostSearch(problem):
     while True:
         if frontier.isEmpty == 1:
             util.raiseNotDefined()
+
         node = frontier.pop()
         if problem.isGoalState(node.state):
             return Node.sol(node)
@@ -170,7 +171,6 @@ def uniformCostSearch(problem):
                 frontier.push(child, child.cost)
             elif child.state in frontier.heap is child.state > frontier.heap:
                 frontier.push(child, child.cost)
-
 
 def nullHeuristic(state, problem=None):
     """
@@ -190,12 +190,13 @@ def aStarSearch(problem, heuristic=nullHeuristic):
     if problem.isGoalState(node):
         return node.sol
     frontier = util.PriorityQueue()
-    frontier.push(node, node.cost)
+    frontier.push(node, (node.cost + heuristic(node.state,problem)))
     explored = []
 
     while True:
         if frontier.isEmpty == 1:
             util.raiseNotDefined()
+
         node = frontier.pop()
         if problem.isGoalState(node.state):
             return Node.sol(node)
@@ -203,10 +204,9 @@ def aStarSearch(problem, heuristic=nullHeuristic):
         for c in problem.getSuccessors(node.state):
             child = Node(c[0], c[1], c[2], node)
             if child not in frontier.heap and child.state not in explored:
-                frontier.push(child, child.cost)
+                frontier.push(child, (child.cost + heuristic(child.state,problem))
             elif child.state in frontier.heap is child.state > frontier.heap:
                 frontier.push(child, child.cost)
-
 
 class Node:
 
